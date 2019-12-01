@@ -101,7 +101,25 @@ class Solver:
         elif model == "Complex":
             return -999
         elif model == "HMM":
-            return -999
+            log_posterior = 0
+            #calculating probability for first word
+            if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
+                log_posterior += np.log10(np.self.initial_prob[label[0]] * self.emission_prob[sentence[0]][label[0]])
+            else:
+                log_posterior += np.log10(0.000001)
+            #calculating probability for rest of the words to calculate the final log posterior probabilities
+            for i in range(1, len(sentence)):
+                prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
+                if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
+                    
+                    log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
+                else:
+                    log_posterior += np.log10(0.000001)
+                if((sentence[i], sentence[i-1]) in self.trans_prob):
+                    log_posterior += np.log10(self.trans_prob[(sentence[i], sentence[i-1])] * prob_tag)
+                else:
+                    log_posterior += np.log10(0.000001 * prob_tag)
+            return log_posterior
         else:
             print("Unknown algo!")
 
