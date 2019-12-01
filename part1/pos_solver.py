@@ -100,12 +100,31 @@ class Solver:
     # Do the training!
     #
     def train(self, data):
-        pass
+        self.calculate_probabilities(data)
 
     # Functions for each algorithm. Right now this just returns nouns -- fix this!
     #
     def simplified(self, sentence):
-        return [ "noun" ] * len(sentence)
+        pos_tags = []
+        for word in sentence:
+            max_prob = 0
+            curr_tag = ''
+            if(word not in self.global_dic):
+                #If the word in test set is not present in the train set,
+                #assign the tag that appears maximum number of times in a corpus
+                curr_tag = max(self.tag_count.items(), key=operator.itemgetter(1))[0]
+            else:
+                #get all the tags assigned to a word
+                tags = self.global_dic[word]
+                #calculate total assignment
+                total = sum(tags.values())
+                for s in tags:
+                    p = tags[s]/total
+                    if(p > max_prob):
+                        max_prob = p
+                        curr_tag = s
+            pos_tags.append(curr_tag)
+        return pos_tags
 
     def complex_mcmc(self, sentence):
         return [ "noun" ] * len(sentence)
