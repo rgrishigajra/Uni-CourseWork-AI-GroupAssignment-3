@@ -130,7 +130,72 @@ class Solver:
         return [ "noun" ] * len(sentence)
 
     def hmm_viterbi(self, sentence):
-        return [ "noun" ] * len(sentence)
+        #pos_tags: will contain final POS tags for the sentence.
+        pos_tags = []
+        #viterbi: list of dictionary for each word containing probabilities of all the POS
+        viterbi = []
+        #temp: temporary dictionary for 
+        temp = {}
+        #setting up the initial probabilities
+        #Calculating probabilities for first word (column1)
+        for t in self.tag_count:
+            if(sentence[0] in self.emission_prob):
+                if(t in self.emission_prob[sentence[0]]):
+                    temp[t] = (self.emission_prob[sentence[0]][t] * self.initial_prob[t], t)
+                else:
+                    temp[t] = (np.finfo(float).eps, t)
+            else:
+                temp[t] = (np.finfo(float).eps, t)
+        viterbi.append(temp)
+        
+        #looping through rest of the words to get most probable tag
+        for i in range(1, len(sentence)):
+            temp_dict = {}
+            prev_tags = viterbi[i-1]
+            for t1 in self.tag_count:
+                maximum = 0
+                curr_tag = t1
+                for t2 in self.tag_count:
+                    val = 0
+                    if((t1,t2) in self.trans_prob):
+                        val = self.trans_prob[(t1,t2)] * prev_tags[t2][0]
+                    else:
+                        val = np.finfo(float).eps * prev_tags[t2][0]
+                    if(val>maximum):
+                        maximum = val
+                        curr_tag = t2
+                if(maximum == 0):
+                    maximum = np.finfo(float).eps
+                if(sentence[i] in self.emission_prob and t1 in self.emission_prob[sentence[i]]):
+                    temp_dict[t1] = (self.emission_prob[sentence[i]][t1] * maximum, curr_tag)
+                else:
+                    temp_dict[t1] = (np.finfo(float).eps * maximum, curr_tag)
+            viterbi.append(temp_dict)
+        
+        #Getting the tag of the last column having maximum probability
+        maxi = 0
+        p_tag = ''
+        last = ''
+        last_col = viterbi[len(sentence)-1]
+        for t in last_col:
+            prob, prev = last_col[t]
+            if(prob > maxi):
+                maxi = prob
+                p_tag = prev
+                last = t
+        if(len(sentence) > 1):
+            pos_tags.append(last)
+        pos_tags.append(p_tag)
+        
+        #Backtracking to get rest of the tags assigned
+        for i in range(len(sentence)-2,0,-1):
+            col = viterbi[i]
+            #get tag and the probability from the previous column
+            prob, prev = col[p_tag]
+            pos_tags.append(prev)
+            p_tag = prev
+        pos_tags.reverse()
+        return pos_tags
 
 
     # This solve() method is called by label.py, so you should keep the interface the
