@@ -86,17 +86,21 @@ class Solver:
                 self.emission_prob[word][tag] /= self.tag_count[tag]
     
     # Calculate the log of the posterior probability of a given sentence
-    #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
+    #  with a given part-of-speech labeling. Right now just returns -999 -- fix this! ---> fixed it! :)
     def posterior(self, model, sentence, label):
         if model == "Simple":
             log_posterior = 0
             for i in range(len(sentence)):
-                if(sentence[i] not in self.global_dic):
-                    total_tag_count = sum(self.tag_count.values())
-                    max_tag_count = max(self.tag_count.items(), key=operator.itemgetter(1))[0]
-                    log_posterior += np.log10(max_tag_count/total_tag_count)
+                if(sentence[i] in self.global_dic and label[i] in self.global_dic[sentence[i]]):
+                    prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
+                    log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]] * prob_tag)
                 else:
-                    log_posterior += np.log10(self.global_dic[sentence[i]][label[i]]/sum(self.global_dic[sentence[i]].values()))
+                    #word count
+                    total_tag_count = sum(self.tag_count.values())
+                    #getting tag having maximum frequency
+                    max_tag = max(self.tag_count.items(), key=operator.itemgetter(1))[0] 
+                    val = self.tag_count[max_tag]
+                    log_posterior += np.log10(val/total_tag_count)
             return log_posterior
         elif model == "Complex":
             return -999
@@ -111,7 +115,6 @@ class Solver:
             for i in range(1, len(sentence)):
                 prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
                 if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
-                    
                     log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
                 else:
                     log_posterior += np.log10(0.000001)
@@ -128,7 +131,7 @@ class Solver:
     def train(self, data):
         self.calculate_probabilities(data)
 
-    # Functions for each algorithm. Right now this just returns nouns -- fix this!
+    # Functions for each algorithm. Right now this just returns nouns -- fix this! ---> fixed it! :)
     #
     def simplified(self, sentence):
         pos_tags = []
