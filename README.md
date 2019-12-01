@@ -30,3 +30,9 @@ While there are no major design decision apart from the global dictionaries, the
 | 2. HMM | 95.06%  | 54.25%  |
 </br>
 | 2. Complex | 18.60%  | 0.00%  |
+
+|   |   |   |   |   |
+|---|---|---|---|---|
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   |   |   |
