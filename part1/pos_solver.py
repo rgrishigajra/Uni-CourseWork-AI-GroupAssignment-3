@@ -89,7 +89,15 @@ class Solver:
     #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
     def posterior(self, model, sentence, label):
         if model == "Simple":
-            return -999
+            log_posterior = 0
+            for i in range(len(sentence)):
+                if(sentence[i] not in self.global_dic):
+                    total_tag_count = sum(self.tag_count.values())
+                    max_tag_count = max(self.tag_count.items(), key=operator.itemgetter(1))[0]
+                    log_posterior += np.log10(max_tag_count/total_tag_count)
+                else:
+                    log_posterior += np.log10(self.global_dic[sentence[i]][label[i]]/sum(self.global_dic[sentence[i]].values()))
+            return log_posterior
         elif model == "Complex":
             return -999
         elif model == "HMM":
