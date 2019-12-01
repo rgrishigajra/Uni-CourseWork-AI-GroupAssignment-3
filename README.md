@@ -31,7 +31,7 @@ While there are no major design decision apart from the global dictionaries, the
 </br>
 | 2. Complex | 18.60%  | 0.00%  |
 
-|   |   |   |   |   |
+|   | words correct  | sentences correct  |   |   |
 |---|---|---|---|---|
 |   |   |   |   |   |
 |   |   |   |   |   |
