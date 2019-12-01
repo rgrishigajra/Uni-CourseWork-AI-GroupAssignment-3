@@ -18,22 +18,10 @@ While there are no major design decision apart from the global dictionaries, the
 
 **Results:**
 ==> So far scored 2000 sentences with 29442 words.
-</br>
-|   | Words Correct   | Sentence Correct  | 
-</br>
-|---|---|---|
-</br>
-| 0. Ground Truth | 100.00%  | 100.00% |
-</br>
-| 1. Simple  | 93.92%  | 47.45%  |
-</br>
-| 2. HMM | 95.06%  | 54.25%  |
-</br>
-| 2. Complex | 18.60%  | 0.00%  |
 
 |   | words correct  | sentences correct  | 
 |---|---|---|
 | 0. Ground Truth  | 100.00%  | 100.00%  | 
 | 1. Simple  | 93.92%  | 47.45%  | 
 | 2. HMM  | 95.06%  | 54.25%  | 
-| 2. Complex  | 18.60%  | 0.00%  |
+| 3. Complex  | 18.60%  | 0.00%  |
