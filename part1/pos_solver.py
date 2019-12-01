@@ -9,6 +9,9 @@
 
 import random
 import math
+import operator
+import copy
+import numpy as np
 
 
 # We've set up a suggested code structure, but feel free to change it. Just
@@ -16,6 +19,72 @@ import math
 # that we've supplied.
 #
 class Solver:
+    
+    global_dic = {}
+    tag_count = {}
+    initial_prob = {}
+    trans_prob = {}
+    emission_prob = {}
+    
+    def calculate_probabilities(self, data):
+        """Caculates the probabilities required to 
+        solves all the 3 types of Bayes Nets"""
+        for i in range(len(data)):
+            sentences, pos_tags = data[i]
+            
+            #initial_prob: A dictionary which maintains probability that 
+            #a given POS starts a sentence
+            first_pos = pos_tags[0]
+            if(first_pos not in self.initial_prob):
+                self.initial_prob[first_pos] = 1
+            else:
+                fp_counter = self.initial_prob[first_pos]
+                fp_counter += 1
+                self.initial_prob[first_pos] = fp_counter
+                
+            for j in range(len(sentences)): #loop through all the words and their respective POS
+                word = sentences[j]
+                tag = pos_tags[j]         
+                #calculating frequencies of two words occurring consecutively
+                if(j+1 < len(sentences)):
+                    if((pos_tags[j+1], tag) not in self.trans_prob):
+                        self.trans_prob[(pos_tags[j+1], tag)] = 1
+                    else:
+                        self.trans_prob[(pos_tags[j+1], tag)] += 1
+                #global_dic: A dictionary of Dictionaries to maintain
+                #counts of different tags assigned to each words in the corpus.
+                if(word not in self.global_dic):
+                    self.global_dic[word] = {tag:1}
+                else:
+                    if(tag not in self.global_dic[word]):
+                        self.global_dic[word].update({tag:1})
+                    else:
+                        tag_counter = self.global_dic[word][tag]
+                        tag_counter += 1
+                        self.global_dic[word][tag] = tag_counter
+                #tag_count: A dictionary that maintains counts of occurrences
+                #of each tag in the corpus.
+                if(tag not in self.tag_count):
+                    self.tag_count[tag] = 1
+                else:
+                    tag_countr = self.tag_count[tag]
+                    tag_countr += 1
+                    self.tag_count[tag] = tag_countr
+        
+        #final initial probabilities
+        for tagg in self.initial_prob:
+            self.initial_prob[tagg] /= len(data)
+        
+        #final transition probabilities
+        for tups in self.trans_prob:
+            self.trans_prob[tups] /= self.tag_count[tups[1]]
+                
+        #emission_prob: A dictionary which maintains emission probabilities
+        self.emission_prob = copy.deepcopy(self.global_dic)
+        for word in self.emission_prob:
+            for tag in self.emission_prob[word]:
+                self.emission_prob[word][tag] /= self.tag_count[tag]
+    
     # Calculate the log of the posterior probability of a given sentence
     #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
     def posterior(self, model, sentence, label):
