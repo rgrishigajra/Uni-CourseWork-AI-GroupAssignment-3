@@ -53,7 +53,7 @@ def trainNotSpam(vocab,pathNotSpam):
 
 
 #calculating priors with the trained data
-def priors(vocab,wordCountSpam,wordCountNotSpam):
+def likelihood(vocab,wordCountSpam,wordCountNotSpam):
     pSpam={}
     pNotSpam={}
     for word in vocab:
@@ -78,30 +78,18 @@ def train(train_directory):
     vocab,wordCountNotSpam,fileCountNotSpam = trainNotSpam(vocab,pathNotSpam)
 
     #calling method to calculate priors
-    pSpam, pNotSpam = priors(vocab,wordCountSpam,wordCountNotSpam)
+    pSpam, pNotSpam = likelihood(vocab,wordCountSpam,wordCountNotSpam)
 
-    return pSpam,pNotSpam,vocab,wordCountSpam,wordCountNotSpam,fileCountSpam,fileCountNotSpam
-
-
-def groundTruth():
-    truth = {}
-    with open('test-groundtruth.txt', "r") as f:
-        for line in f.readlines():
-            filename, decision = line.split(' ')
-            decision = decision.replace('\n', '')
-            truth[filename] = decision
-    return truth
+    return pSpam,pNotSpam
 
 #testing on given test data
-def test(test_directory,vocab,wordCountSpam,wordCountNotSpam,fileCountSpam,fileCountNotSpam):
+def test(test_directory,pSpam,pNotSpam):
     pathTest = test_directory
 
     #probabilities of mail being spam or not spam
     spamProbab = 0.5
     notSpamProbab = 0.5
 
-    right = 0
-    wrong = 0
     outputFileSpam=[]
     outputFileNotSpam=[]
     #going through all files in test data
@@ -118,17 +106,7 @@ def test(test_directory,vocab,wordCountSpam,wordCountNotSpam,fileCountSpam,fileC
                     if word not in bag_of_words:
                         bag_of_words.append(word)
 
-                        # #updating probabilities
-                        # if word in pSpam:
-                        #     vocab[word]['SpamCount'] += 1
-                        #     wordCountSpam+=1
-                        #     pSpam[word] = (vocab[word]['SpamCount'] ) / (wordCountSpam)
-                        # if word in pNotSpam:
-                        #     vocab[word]['NotSpamCount']+=1
-                        #     wordCountNotSpam+=1
-                        #     pNotSpam[word] = (vocab[word]['NotSpamCount'] ) / (wordCountNotSpam)
-
-                #calculating fro each word in bag of words
+                #calculating for each word in bag of words
                 for word in bag_of_words:
                     if word in pSpam and pNotSpam:
                         if pSpam[word]!=0 and pNotSpam[word]!=0:
@@ -136,23 +114,10 @@ def test(test_directory,vocab,wordCountSpam,wordCountNotSpam,fileCountSpam,fileC
                             sum += (log(pSpam[word])-log( pNotSpam[word]))
                 #if odds ratio is greater than 1 then the file is labbeled as spam else notspam
                 if sum > 1:
-                    if truth[file] != 'spam':
-                        wrong += 1
-                        outputFileSpam += [str(file) + ' spam ' + str(sum) + ' wrong']
-                    else:
-                        right += 1
-                        outputFileSpam += [str(file) + ' spam ' + str(sum) + ' right']
-                    # outputFile += [str(file) + ' spam ' + str(sum)]
+                    outputFileSpam += [str(file) +' ' +'spam']
                 else:
+                    outputFileNotSpam += [str(file) +' ' +'notspam']
 
-                    if truth[file] != 'notspam':
-                        wrong += 1
-                        outputFileNotSpam += [str(file) + ' notspam']
-                    else:
-                        right += 1
-                        outputFileNotSpam += [str(file) + ' notspam']
-                    # outputFile += [str(file) + ' notspam']
-    print(right, wrong, (right / (right + wrong)) * 100)
     return outputFileSpam+outputFileNotSpam
 
 
@@ -161,12 +126,10 @@ if __name__ == '__main__':
     (train_directory, test_directory, output_file) = sys.argv[1:]
 
     #calling training methiod
-    pSpam, pNotSpam,vocab,wordCountSpam,wordCountNotSpam,fileCountSpam,fileCountNotSpam = train(train_directory)
-
-    truth = groundTruth()
+    pSpam, pNotSpam = train(train_directory)
 
     #calling test method
-    outputFile = test(test_directory,vocab,wordCountSpam,wordCountNotSpam,fileCountSpam,fileCountNotSpam)
+    outputFile = test(test_directory,pSpam,pNotSpam)
     output = './' + output_file
 
     #wrtiing output in output-file
