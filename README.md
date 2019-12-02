@@ -32,7 +32,7 @@ For each sample, every word's probability is calculated for all 12 parts of spee
 The tag having maximum count for a word will be the final tag for that word, and thus final pos tags list will have tags with maximum probability tag value for all the words. </br>
 
 **Log Posterior** is calculated using the formula for calculating posterior probability: </br>
-posterior \approx prior * likelihood </br>
+posterior: p(t|w) = p(t) * p(w|t)/ p(w) </br>
 and later applying log with base 10 to it.
 
 **Other Dicussion:** </br>
