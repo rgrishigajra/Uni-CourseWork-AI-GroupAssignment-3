@@ -56,6 +56,7 @@ for (s, gt) in test_data:
         
     # run all algorithms on the sentence
     for (algo, label) in zip(Algorithms, Algorithm_labels):
+
         outputs[label] = solver.solve( algo, s) 
 
     # calculate posteriors for each output under each model

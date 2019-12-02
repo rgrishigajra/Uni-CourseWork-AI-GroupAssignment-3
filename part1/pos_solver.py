@@ -89,39 +89,46 @@ class Solver:
     #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
     def posterior(self, model, sentence, label):
         if model == "Simple":
-            log_posterior = 0
-            for i in range(len(sentence)):
-                if(sentence[i] not in self.global_dic):
-                    total_tag_count = sum(self.tag_count.values())
-                    max_tag_count = max(self.tag_count.items(), key=operator.itemgetter(1))[0]
-                    log_posterior += np.log10(max_tag_count/total_tag_count)
-                else:
-                    log_posterior += np.log10(self.global_dic[sentence[i]][label[i]]/sum(self.global_dic[sentence[i]].values()))
-            return log_posterior
-        elif model == "Complex":
-            return -999
-        elif model == "HMM":
-            log_posterior = 0
-            #calculating probability for first word
-            if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
-                log_posterior += np.log10(np.self.initial_prob[label[0]] * self.emission_prob[sentence[0]][label[0]])
-            else:
-                log_posterior += np.log10(0.000001)
-            #calculating probability for rest of the words to calculate the final log posterior probabilities
-            for i in range(1, len(sentence)):
-                prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
-                if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
-                    
-                    log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
-                else:
-                    log_posterior += np.log10(0.000001)
-                if((sentence[i], sentence[i-1]) in self.trans_prob):
-                    log_posterior += np.log10(self.trans_prob[(sentence[i], sentence[i-1])] * prob_tag)
-                else:
-                    log_posterior += np.log10(0.000001 * prob_tag)
-            return log_posterior
+            return 1
+        #     log_posterior = 0
+        #     for i in range(len(sentence)):
+        #         if(sentence[i] not in self.global_dic):
+        #             total_tag_count = sum(self.tag_count.values())
+        #             max_tag_count = max(self.tag_count.items(), key=operator.itemgetter(1))[1]
+        #             log_posterior += np.log10(max_tag_count/total_tag_count)
+        #         else:
+        #             if i in self.global_dic[sentence[i]]:
+        #                 log_posterior += np.log10(self.global_dic[sentence[i]][label[i]]/sum(self.global_dic[sentence[i]].values()))
+        #             else:
+        #                 self.global_dic[sentence[i]][label[i]]=0.0000001
+        #                 log_posterior += np.log10(
+        #                     self.global_dic[sentence[i]][label[i]] / sum(self.global_dic[sentence[i]].values()))
+        #     return log_posterior
+        # elif model == "Complex":
+        #     return -999
+        # elif model == "HMM":
+        #     log_posterior = 0
+        #     #calculating probability for first word
+        #     if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
+        #         log_posterior += np.log10((self.initial_prob[label[0]]) * self.emission_prob[sentence[0]][label[0]])
+        #     else:
+        #         log_posterior += np.log10(0.000001)
+        #     #calculating probability for rest of the words to calculate the final log posterior probabilities
+        #     for i in range(1, len(sentence)):
+        #         prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
+        #         if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
+        #
+        #             log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
+        #         else:
+        #             log_posterior += np.log10(0.000001)
+        #         if((sentence[i], sentence[i-1]) in self.trans_prob):
+        #             log_posterior += np.log10(self.trans_prob[(sentence[i], sentence[i-1])] * prob_tag)
+        #         else:
+        #             log_posterior += np.log10(0.000001 * prob_tag)
+        #     return log_posterior
         else:
-            print("Unknown algo!")
+            return(-999)
+
 
     # Do the training!
     #
@@ -152,8 +159,6 @@ class Solver:
             pos_tags.append(curr_tag)
         return pos_tags
 
-    def complex_mcmc(self, sentence):
-        return [ "noun" ] * len(sentence)
 
     def hmm_viterbi(self, sentence):
         #pos_tags: will contain final POS tags for the sentence.
@@ -221,7 +226,78 @@ class Solver:
             pos_tags.append(prev)
             p_tag = prev
         pos_tags.reverse()
+
         return pos_tags
+    def gibsSampling(self,posSample,sentence):
+
+        posTags = list(self.tag_count)
+        for sampleIterator in range(1, 1000):
+
+            posSample[sampleIterator] = posSample[sampleIterator - 1]
+
+            for wordIterator in range(len(sentence)):
+                maxTag = ''
+                maxProb = 0
+                for speechIterator in range(len(posTags)):
+
+                    emm = 0.0000001
+                    speech = posTags[speechIterator]
+                    if sentence[wordIterator] in self.emission_prob:
+                        if speech in self.emission_prob[sentence[wordIterator]]:
+                            emm = self.emission_prob[sentence[wordIterator]][speech]
+                    trans = 1
+                    init = 1
+                    if wordIterator != 0:
+                        trans = 0.000001
+                        init = 0.000001
+                        if wordIterator == len(posSample) - 1:
+                            if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob and (
+                            speech, posSample[sampleIterator][0]) in self.trans_prob:
+                                trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])] * \
+                                        self.trans_prob[(speech, posSample[sampleIterator][0])]
+                            else:
+                                if (speech, posSample[sampleIterator][0]) in self.trans_prob:
+                                    trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
+                                if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob:
+                                    trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
+
+                            init = self.initial_prob[speech] * self.initial_prob[posSample[sampleIterator][0]]
+                    else:
+                        trans = 0.000001
+                        init = 0.000001
+                        if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob:
+                            trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
+                        init = self.initial_prob[speech]
+                    probab = emm * trans * init
+                    if maxProb < probab:
+                        maxProb = probab
+                        maxTag = speech
+                posSample[sampleIterator][wordIterator] = maxTag
+        return posSample
+
+    def complex_mcmc(self, sentence):
+        dictCount={}
+        posSample = [[]] * 1000
+        posSample[0] = ["noun"] * len(sentence)
+        posSample=self.gibsSampling(posSample,sentence)
+        for sampleIterator in range(500,1000):
+                for tagIterator in range(len(posSample[sampleIterator])):
+                    if tagIterator in dictCount:
+                        if posSample[sampleIterator][tagIterator] in dictCount[tagIterator]:
+                            dictCount[tagIterator][posSample[sampleIterator][tagIterator]]+=1
+                        else:
+                            dictCount[tagIterator][posSample[sampleIterator][tagIterator]]=1
+                    else:
+                        dictCount[tagIterator]={}
+        pos_tags=[]
+        for word,val in dictCount.items():
+            tag=max(val.items(), key=operator.itemgetter(1))[0]
+            pos_tags.append(tag)
+        return pos_tags
+
+
+
+
 
 
     # This solve() method is called by label.py, so you should keep the interface the
