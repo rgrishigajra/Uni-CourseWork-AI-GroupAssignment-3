@@ -41,7 +41,7 @@ For HMM model we have maintained a list called viterbi which works similar to a 
 
 For MCMC we have two assumptions: first is the same as previous one that if a word or a tag is not present in the train set, emission probability is assign a very low probability. Second, is that for every word we are getting the tag having maximum probability. However, we are working with occurrences and ignoring the division by the total occurrences of the tag for that word as it wont have any effect. </br>
 
-**Reference: ** https://web.stanford.edu/~jurafsky/slp3/8.pdf
+**Reference:** https://web.stanford.edu/~jurafsky/slp3/8.pdf
 
 **Results:**
 </br>
