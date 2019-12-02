@@ -5,11 +5,18 @@
 **Formulation and code description:**
 </br>
 In this part our goal is to assign a part-of-speech to every word in the sentence using 3 types of Bayes Nets: Simple, HMM and MCMC. As given in the instructions we are only required to change the <i>pos_solver.py</i> file, hence it is the only file that has been modified. A new fucntion is defined called <i>calculate_probabilities</i> which calculates all the probabilities required for all the 3 models. This function is called in train function. Following probabilities are calculated:</br>
-emission: p(W_i/t_i) = c(t_i,w_i)/c(t_i)</br>
-transition: p(t_i+1,t_i) = c(t_i+1,t_i)/c(t_i)</br>
-initial: p(t_i) = occurrce of t_i in first word of the sentence/length of data</br>
-</br>
-Starting with the **simple** model, where each observed variable is dependent only on the its own hidden variable, implementing this Bayes net was straight forward. Assign a word the most probable POS from all the POS associated with that word. And if a word or tag is present in test set but not in train set, then that word is assigned the most occuring tag in the corpus.
+emission: p(W_i/t_i) = c(t_i,w_i)/c(t_i) </br>
+transition: p(t_i+1,t_i) = c(t_i+1,t_i)/c(t_i) </br>
+initial: p(t_i) = occurrce of t_i in first word of the sentence/length of data. </br>
+Here t_i is POS tag and w_i is word. </br>
+
+Starting with the **simple** model, where each observed variable is dependent only on the its own hidden variable, implementing this Bayes net was straight forward. To get the most probable tags for the words of sentence we find the tag which is has maximum probability amongst all the other tags associated with this word. </br>
+-for each word
+&nbsp;&nbsp;&nbsp;-if w has t_1....t_k tags:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-p(t_i/w) = c(w,t_i)/c(w,t_1) + ... + c(w, t_k) </br> 
+Here c(w,t_i) is no. of times w/t_i appears in the corpus. </br>
+If a word or tag is present in test set but not in train set, then that word is assigned the most occuring tag in the corpus.
+
 </br>
 Next up is **HMM** which is solved using viterbi algorithm. In this model the observed variable is dependent on the it's hidden variable and the hidden variable i.e. POS is dependent on the previous POS. Since viterbi uses the concept of dynamic programming we have maintained a list which holds a dicitonary which contains the probabilities for all the POS tags for a particular word (i.e column of word). Once, this so called matrix is calcualted we backtrack to get the list of most probable tags for the sentence.
 </br>
