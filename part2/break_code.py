@@ -63,6 +63,7 @@ def break_code(string, corpus):
     frequency_dictionary={}
     frequency_dictionary[corpus[0]]={}
     # calculate frequency of each character given the previous character in a nest dictionary where current key is outer key and previous character is inner key
+    print("Decrypting, hold my beer for ten minutes while I work my magic :P")
     for charIterator in range(1,len(corpus)):
         if corpus[charIterator] not in frequency_dictionary:
             frequency_dictionary[corpus[charIterator]]={}
@@ -75,7 +76,7 @@ def break_code(string, corpus):
         if chr(dictIterator1) in frequency_dictionary:
             for dictIterator2 in range(97,123):
                 if chr(dictIterator2) in frequency_dictionary[chr(dictIterator1)]:
-                    frequency_dictionary[chr(dictIterator1)][chr(dictIterator2)]['probab']=frequency_dictionary[chr(dictIterator1)][chr(dictIterator2)]['count']/len(string)
+                    frequency_dictionary[chr(dictIterator1)][chr(dictIterator2)]['probab']=frequency_dictionary[chr(dictIterator1)][chr(dictIterator2)]['count']/len(string) # len(string) just to scale down the probabaility, we dont find exact values since we only need them to compare
     # below loop calculates probabilties of first letter of words
     for dictIterator1 in range(97,123):
         if chr(dictIterator1) in frequency_dictionary:
@@ -99,7 +100,7 @@ def break_code(string, corpus):
     if min_probab>decoded_probab:
             min_probab=decoded_probab
             decrypted_answer=decoded_string
-    print(decrypted_answer,min_probab)  #print string and starting probab
+    # print(decrypted_answer,min_probab)  #print string and starting probab
     start_time=timeit.default_timer()
     while timeit.default_timer()-start_time < 601:
         # modifying the decryption tables
@@ -111,11 +112,11 @@ def break_code(string, corpus):
         if min_probab>new_decoded_probab:
             min_probab=new_decoded_probab
             decrypted_answer=new_decoded_string
-            # f= open("currentanswer.txt","w")
+            # f= open("currentanswer.txt","w") #uncomment to print the output in a file as it appears
             # f.write(str(min_probab)+"\n")
             # f.write(decrypted_answer)
             # f.close()
-            print(decrypted_answer,min_probab) #prints current best answer
+            # print(decrypted_answer,min_probab) #prints current best answer
         # if the new probability is better, switch tables
         if new_decoded_probab<decoded_probab :
             decrypt_rearrange_table = new_decrypt_rearrange_table
@@ -139,6 +140,7 @@ def break_code(string, corpus):
                     decrypt_replace_table = new_decrypt_replace_table
                     decoded_probab=new_decoded_probab
                     decoded_string=new_decoded_string
+    print("Ten minutes are done, check your output file! and yeah gimme my beer back.")
     return decrypted_answer
 
 
