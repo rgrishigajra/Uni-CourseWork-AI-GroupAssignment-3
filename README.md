@@ -30,11 +30,13 @@ For other words of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*
 For each sample, every word's probability is calculated for all 12 parts of speech tags and the tag that gives highest probability is considered for that word. The tag of this word is then updated in the current sample which is used in next iteration of samples. This is done for 1000 samples and then tag count is stored for every word from the samples. While doing so, first 500 samples are ignored.
 The tag having maximum count for a word will be the final tag for that word, and thus final pos tags list will have tags with maximum probability tag value for all the words.
 
-
-
 </br>
 **Other Dicussion:** </br>
-While there are no major design decision apart from the global dictionaries, there were many minor decisions or assumptions taken into consideration for different model. For example, in  the simple model we decided to assign a POS tag to a word which occurs the most no. of time in the corpus if the word is present in the test set but not in train set. Similarly for HMM, if the word and the POS tags are not in our dicitonaries (i.e. the trained data) then we assign a very small probability. The initial hurdle for us was to decide the structure of the code and how to train the data i.e., calculate the probabilities, once that was decided, the implementation was done according to the discussion done in class and ppts. To understand these models better for POS we referred to a few external sources like blogs and papers.
+There were many design decision that had to be made initailly like: How to train the data, which type of data structure to be used, What should be the flow of the code. One of the major design decision made was to make global dictionaries for probability so that the whole code can access it. Once the above questions were answered we went onto working on the code. For simple model, the implementation was straight forward. One assumption considered for this model was that if a word or tag is present in the test file but not in the train file we assign the word the most occurring tag in the corpus. </br>
+
+For HMM model we have maintained a list called viterbi which works similar to a matrix (because viterbi uses the concept of dynamic programming). For this model the assumption we made is that if a word is present in the test but not in train, emission proabability is assign a very low probability to that word. One of the major issue we had for this model were key errors. We had to apply various conditions to handle with these errors. </br>
+
+For MCMC we have two assumptions: first is the same as previous one that if a word or a tag is not present in the train set, emission probability is assign a very low probability. Second, is that for every word we are getting the tag having maximum probability. However, we are working with occurrences and ignoring the division by the total occurrences of the tag for that word as it wont have any effect. </br>
 
 **Results:**
 </br>
