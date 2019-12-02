@@ -33,7 +33,7 @@ While there are no major design decision apart from the global dictionaries, the
 
 **
 
-# **Part Two**
+# **Part 2: Code breaking**
 
 **
 **
