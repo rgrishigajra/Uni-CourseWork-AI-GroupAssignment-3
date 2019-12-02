@@ -107,3 +107,12 @@ How the search works:
    input file at all since its already English like. Probab.txt is the
    dictionary of frequencies and the probabilities I am using to
    calculate the probability of the file.*
+
+Example > encrypted-text-3
+Input:
+	 *i enpepn o echwxeh epiz lktpw fhnhfq cfe hzkc ndtewc onl cknlqlo kctfcnoe g egzcz atgcnk mnceatnpekouf nnzhcf utz pwgnf  pmewhzp qn fwfnfkh pige pny ekcxexcd guwec eocclkwp qnhfcqc hklpfkeup  lkcmy ch cc eooce w lkz cxcnnkkphce pnokcl cu ooocftwc pkoefckhwhf nqfh wccentdof cgae  lkckw fmc fthip accpx co kfckft  klegiy nwtitpohkocp tflock cwc pfp eytc pweo kmk fc mlnhotocxckk ucn lc ftzw ehnhfq cfchnlxcg  onfkfl  lkkmt c chexuco knkhoc ckuxn k et ocgxc lkmkk fc mlcvcok e ntpznok zgi nggzckpwzhe kcl ogcwc oachnllxe  oncpke k e cu dpcteptcwk e ncagn p ecpgncpgoc ouigsc tthwezecp e z nnaunfrgnpek geockotnop nikknpek clo ofm ezv jchf ginpqtk mnpk ncc lc omzk ecg lyl f peckknokeni hqppokfkcl  lkwkh fqklnl c iqtbckpwe z l ckikhee z xfcxoz ghk ecn lk lshiunkn n chocohatk cn o ee othcht  c*
+
+Output :
+	*o  union is more profound than marriage for it embodies the highest ideals of love fidelitw devotion sacrifice and familw n forming a marital union tyo people become something greater than once thew yere s some of the petitioners in these cases demonstrate marriage embodies a love that maw endure even past death t yould misunderstand these men and yomen to saw thew disrespect the idea of marriage heir plea is that thew do respect it respect it so deeplw that thew seex to find its fulfillment for themselves heir hope is not to be condemned to live in loneliness ekcluded from one of civilizations oldest institutions hew asx for equal dignitw in the ewes of the lay he onstitution grants them that right he judgment of the ourt of ppeals for the ikth ircuit is reversed t is so ordered*      
+
+The above output was generated in ten minutes during our testing, which was pretty close to the answer, thus we didnt find a need to perform beam search or optimizing the algorithm.
