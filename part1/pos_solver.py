@@ -102,15 +102,55 @@ class Solver:
                     val = self.tag_count[max_tag]
                     log_posterior += np.log10(val/total_tag_count)
             return log_posterior
+        
         elif model == "Complex":
-            return -999
+            log_posterior = 0
+            #calculating probability for first word
+            if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
+                log_posterior += np.log10(self.initial_prob[label[0]] * self.emission_prob[sentence[0]][label[0]])
+                log_posterior += np.log10(self.tag_count[label[0]]/sum(self.tag_count.values()))
+            else:
+                log_posterior += np.log10(0.0000001 * self.initial_prob[label[0]])
+                log_posterior += np.log10(self.tag_count[label[0]]/sum(self.tag_count.values()))
+            
+            #calculating probability for rest of the words except for the last word
+            for i in range(1, len(sentence)-1):
+                prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
+                if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
+                    log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
+                else:
+                    log_posterior += np.log10(0.0000001)
+                if((label[i], label[i-1]) in self.trans_prob):
+                    log_posterior += np.log10(self.trans_prob[(label[i], label[i-1])] * prob_tag)
+                else:
+                    log_posterior += np.log10(0.0000001 * prob_tag)
+                    
+            #calculating probability for the last word
+            if(sentence[len(sentence)-1] in self.emission_prob and label[len(label)-1] in self.emission_prob[sentence[len(label)-1]]):
+                log_posterior += np.log10(self.emission_prob[sentence[len(sentence)-1]][label[len(sentence)-1]])
+            else:
+                log_posterior += np.log10(0.0000001)
+            if((label[len(sentence)-1], label[len(sentence)-2]) in self.trans_prob):
+                log_posterior += np.log10(self.trans_prob[(label[len(sentence)-1], label[len(sentence)-2])])
+                log_posterior += np.log10(self.tag_count[label[len(sentence)-1]]/sum(self.tag_count.values()))
+            else:
+                log_posterior += np.log10(0.0000001)
+                log_posterior += np.log10(self.tag_count[label[len(sentence)-1]]/sum(self.tag_count.values()))
+            if (label[len(label)-1], label[0]) in self.trans_prob:
+                log_posterior += np.log10(self.trans_prob[(label[len(label)-1], label[0])])
+                log_posterior += np.log10(self.tag_count[label[0]]/sum(self.tag_count.values()))
+            else:
+                log_posterior += np.log10(0.0000001)
+                log_posterior += np.log10(self.tag_count[label[0]]/sum(self.tag_count.values()))
+            return log_posterior
+        
         elif model == "HMM":
             log_posterior = 0
             #calculating probability for first word
             if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
                 log_posterior += np.log10(self.initial_prob[label[0]] * self.emission_prob[sentence[0]][label[0]])
             else:
-                log_posterior += np.log10(0.000001)
+                log_posterior += np.log10(0.000001 * self.initial_prob[label[0]])
             #calculating probability for rest of the words to calculate the final log posterior probabilities
             for i in range(1, len(sentence)):
                 prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
@@ -118,8 +158,8 @@ class Solver:
                     log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
                 else:
                     log_posterior += np.log10(0.000001)
-                if((sentence[i], sentence[i-1]) in self.trans_prob):
-                    log_posterior += np.log10(self.trans_prob[(sentence[i], sentence[i-1])] * prob_tag)
+                if((label[i], label[i-1]) in self.trans_prob):
+                    log_posterior += np.log10(self.trans_prob[(label[i], label[i-1])] * prob_tag)
                 else:
                     log_posterior += np.log10(0.000001 * prob_tag)
             return log_posterior
@@ -225,6 +265,8 @@ class Solver:
         pos_tags.reverse()
 
         return pos_tags
+    
+    
     def gibsSampling(self,posSample,sentence):
 
         #getting all 12 pos from tag_count
@@ -244,13 +286,13 @@ class Solver:
 
                 #iterate for every pos
                 for speechIterator in range(len(posTags)):
-                    #initial declarations
-                    trans = 1
-                    init = 1
-                    emm = 0.0000001
-
                     #get current pos
                     speech = posTags[speechIterator]
+                    
+                    #initial declarations
+                    trans = 1
+                    init = self.initial_prob[speech]
+                    emm = 0.0000001
 
                     #calculate emmision probability
                     if sentence[wordIterator] in self.emission_prob:
@@ -319,8 +361,6 @@ class Solver:
                             dictCount[tagIterator][posSample[sampleIterator][tagIterator]]=1
                     else:
                         dictCount[tagIterator]={}
-
-
         pos_tags=[]
         #getting the max count of pos for each word
         for word,val in dictCount.items():
@@ -343,4 +383,3 @@ class Solver:
             return self.hmm_viterbi(sentence)
         else:
             print("Unknown algo!")
-
