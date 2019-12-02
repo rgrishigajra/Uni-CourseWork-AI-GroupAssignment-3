@@ -39,7 +39,7 @@ While there are no major design decision apart from the global dictionaries, the
 | 0. Ground Truth  | 100.00%  | 100.00%  | 
 | 1. Simple  | 93.92%  | 47.45%  | 
 | 2. HMM  | 95.06%  | 54.25%  | 
-| 3. Complex  | 18.60%  | 0.00%  |
+| 3. Complex  | 92.07%  | 40.52%  |
 
 
 **
