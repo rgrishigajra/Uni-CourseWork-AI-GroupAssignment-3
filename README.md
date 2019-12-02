@@ -23,10 +23,10 @@ Next up is **HMM** which is solved using viterbi algorithm. In this model the ob
 ~ Find the maximum probability in the last column and backtrack to get the most probable tags for the sentence, append them into a list and return the list. </br>
 
 </br>
-For **MCMC**
-Monte carlo markov chains are used for randomizing and creating a sampling space. Here, we start with the data and assume random POS tags for the sentence in the start. Then we start randomizing the POS tags, we use the disctribution and caluculate the probability of each word, given all the other words are tagged. We assign the maximum POS tag for this word using this formula :
+**MCMC** (Monte carlo markov chains) are used for randomizing and creating a sampling space. Here, we start with the data and assume random POS tags for the sentence in the start. Then we start randomizing the POS tags, we use the disctribution and caluculate the probability of each word, given all the other words are tagged. We assign the maximum POS tag for this word using this formula : </br>
 P(W0)=P(Wi/S0)*P(S0)
 P(Wi/Si)
+
 </br>
 **Other Dicussion:**
 </br>
@@ -148,7 +148,7 @@ Conversion notes:
 ----->
 
 
-**Part 3: Spam Classification **
+# Part 3: Spam Classification
 
 **Naive Bayes classifier** is used to implement the spam classifier.
 
