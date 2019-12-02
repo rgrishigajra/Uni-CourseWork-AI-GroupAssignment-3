@@ -127,3 +127,65 @@ Output :
 	*o  union is more profound than marriage for it embodies the highest ideals of love fidelitw devotion sacrifice and familw n forming a marital union tyo people become something greater than once thew yere s some of the petitioners in these cases demonstrate marriage embodies a love that maw endure even past death t yould misunderstand these men and yomen to saw thew disrespect the idea of marriage heir plea is that thew do respect it respect it so deeplw that thew seex to find its fulfillment for themselves heir hope is not to be condemned to live in loneliness ekcluded from one of civilizations oldest institutions hew asx for equal dignitw in the ewes of the lay he onstitution grants them that right he judgment of the ourt of ppeals for the ikth ircuit is reversed t is so ordered*      
 
 The above output was generated in ten minutes during our testing, which was pretty close to the answer, thus we didnt find a need to perform beam search or optimizing the algorithm.
+
+
+**Part 3: Spam Classification**
+
+**Naive Bayes classifier** is used to implement the spam classifier.
+
+This program involves a **training part** where the likelihood probabilities are calculated based on the provided training data and a **testing part** where the program predicts where the file is spam or not.
+
+_Methods used in the program:_
+
+**Test()** - To test the data and predict whether the file is spam or not
+
+**Train()** - To train on provided spam and non-spam file
+
+**likelihood()** - To calculate likelihood probabilities using spam and non-spam files.
+
+**trainSpam()** - To train on spam files.
+
+**trainNotSpam()** -To train on non-spam files.
+
+**Approach:**
+
+- We need to calculate **P(S/w1,w2,w3,…..wn)/ P(S\_/w1,w2,w3,…..wn)** for each test file where _P(S/w1,w2,w3,…..wn)_ is probability of an email being a spam given the words _w1,w2,w3,…wn_ and _P(S\_/w1,w2,w3,…..wn)_ is probability of an email not being a spam given the words _w1,w2,w3,…wn_.
+- For calculating these probabilities we need **P(w1,w2,w3,…..wn/S)\*P(S)/P(w1,w2,w3,…..wn)** and **P(w1,w2,w3,…..wn/S\_)\*P(S\_)/P(w1,w2,w3,…..wn)**.
+- But as we calculate odds ratio we only need_P(w1,w2,w3,…..wn/S),__P(w1,w2,w3,…..wn/S\_),__P(S)_ and _P(S\_)._
+- Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S\_), P(w2/S\_)… P(wn/S\_),_ where P(wn/S) is probability of word w1 occurring in a spam file and _P(wn/S\_)_ is probability of word _wn_ occurring in non-spam file.
+
+**Implementation:**
+
+- _P(S)_ and _P(S\_) is_ assumed as 0.5 as every mail has equal possibility of being a spam or not spam.
+- Frequency of words is calculated in **trainSpam()** and **trainNotSpam()** methods by going through every file in spam and non-spam data and breaking the file-text into token of words and saving the frequency of those words for every spam and non-spam files.
+- _P(wi/S) and P(wi/S\_)_ is calculated in the **likelihood()** method during training process for every word tokenized in the training process.
+
+**P(wi/S) = frequency of the word in spam files/total number of words in spam files P(wi/S\_)=  frequency of the word in non-spam files/total number of words in non-spam files**
+
+- After the probabilities are calculated using training data, these probabilities are used while testing data for predicting whether a file is &#39;_spam&#39;_ or **&#39;** _notspam&#39;_.
+- Every test file is converted to bag of words, and log of ratio of **P(S/w1,w2…wn)/P(S\_,w1,w2,..wn)** is calculated for every word in bag of words whose probability is calculated with training data where,
+
+**P(S/w1,w2…wn)/P(S\_,w1,w2,..wn)= (P(w1/S)\*P(w2/S)…\*P(wn/S)\*P(S))/ (P(w1/S\_)\*P(w2/S\_)…\*P(wn/S\_)\*P(S\_))**
+
+- If the total value is greater than 1 (meaning if the probability of that email being spam given words is greater than 0.5) than that email is labeled as **spam** else is labeled as **notspam**. The file and the resulting label are stored in a list and is written to an output file.
+
+**Difficulties faced:**
+
+- Difficulty was faced while opening some of the files, due to **UniCodeError**.
+- Thus, the file is opened using **utf8** encoding and has attribute **errors=&#39;ignore&#39;**.
+- The **comma** , **semi-colon** and **equal to** is replaced from file text with **whitespace** to **tokenize** the words properly.
+- The word is converted to **lower case** before storing to avoid multiple copies of the same word in different cases.
+- A dictionary **&#39;vocab&#39;** is maintained such that it contains all the unique words from training data and its frequency is maintained for spam and non-spam files.
+- The probabilities of test data are calculated using **log** to avoid working with extremely small values.
+
+**Approaches tried:**
+
+- The likelihood probabilities are calculated as -\&gt;
+
+**frequency of the word in spam or non-spam files/total number of words in spam or non-spam files**
+
+- A different approach was tried originally where the likelihood probabilities were calculated as-\&gt;
+
+**Word appearances in spam or non-spam files/total number of that spam or non-spam**
+
+**Currently, the program predicts the spam file correctly 95% of the time.**
