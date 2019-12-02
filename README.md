@@ -4,10 +4,10 @@
 
 **Formulation and code description:**
 </br>
-In this part our goal is to assign a part-of-speech to every word in the sentence using 3 types of Bayes Nets: Simple, HMM and MCMC. As given in the instructions we are only required to change the <i>pos_solver.py</i> file, hence it is the only file that has been modified. A new fucntion is defined called <i>calculate_probabilities</i> which calculates all the probabilities required for all the 3 models. This function is called in train function. Following probabilities are calculated:
-emission: p(W_i/t_i) = c(t_i,w_i)/c(t_i)
-transition: p(t_i+1,t_i) = c(t_i+1,t_i)/c(t_i)
-initial: p(t_i) = occurrce of t_i in first word of the sentence/length of data
+In this part our goal is to assign a part-of-speech to every word in the sentence using 3 types of Bayes Nets: Simple, HMM and MCMC. As given in the instructions we are only required to change the <i>pos_solver.py</i> file, hence it is the only file that has been modified. A new fucntion is defined called <i>calculate_probabilities</i> which calculates all the probabilities required for all the 3 models. This function is called in train function. Following probabilities are calculated:</br>
+emission: p(W_i/t_i) = c(t_i,w_i)/c(t_i)</br>
+transition: p(t_i+1,t_i) = c(t_i+1,t_i)/c(t_i)</br>
+initial: p(t_i) = occurrce of t_i in first word of the sentence/length of data</br>
 </br>
 Starting with the **simple** model, where each observed variable is dependent only on the its own hidden variable, implementing this Bayes net was straight forward. Assign a word the most probable POS from all the POS associated with that word. And if a word or tag is present in test set but not in train set, then that word is assigned the most occuring tag in the corpus.
 </br>
