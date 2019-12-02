@@ -227,56 +227,89 @@ class Solver:
         return pos_tags
     def gibsSampling(self,posSample,sentence):
 
+        #getting all 12 pos from tag_count
         posTags = list(self.tag_count)
+
+        #iterate over 1000 samples
         for sampleIterator in range(1, 1000):
 
+            #get the previous updated sample
             posSample[sampleIterator] = posSample[sampleIterator - 1]
 
+            #iterate over every word in sentence
             for wordIterator in range(len(sentence)):
+
                 maxTag = ''
                 maxProb = 0
+
+                #iterate for every pos
                 for speechIterator in range(len(posTags)):
+                    #initial declarations
                     trans = 1
                     init = 1
                     emm = 0.0000001
+
+                    #get current pos
                     speech = posTags[speechIterator]
+
+                    #calculate emmision probability
                     if sentence[wordIterator] in self.emission_prob:
                         if speech in self.emission_prob[sentence[wordIterator]]:
                             emm = self.emission_prob[sentence[wordIterator]][speech]
 
+                    #if current word is not the first word of the sentence
                     if wordIterator != 0:
-                        trans = 0.000001
-                        init = 0.000001
+
+                        trans = 0.00000001
+                        init = 0.00000001
+                        #if current word is the last word of sentece
                         if wordIterator == len(posSample) - 1:
+
                             if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob and (
                             speech, posSample[sampleIterator][0]) in self.trans_prob:
+                                #transition probabilty
                                 trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])] * \
                                         self.trans_prob[(speech, posSample[sampleIterator][0])]
                             else:
+                                #transition probabilty
                                 if (speech, posSample[sampleIterator][0]) in self.trans_prob:
-                                    trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
+                                    trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]*0.00000001
                                 if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob:
-                                    trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
-
+                                    trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]*0.00000001
+                            #initial probability
                             init = self.initial_prob[speech] * self.initial_prob[posSample[sampleIterator][0]]
-                    else:
-                        trans = 0.000001
-                        init = 0.000001
-                        if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob:
-                            trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
-                        init = self.initial_prob[speech]
+
+                        #if current word is in between first and last word of sentence
+                        else:
+                            trans = 0.00000001
+                            init = 0.00000001
+                            #transition probability
+                            if (speech, posSample[sampleIterator][wordIterator - 1]) in self.trans_prob:
+                                trans = self.trans_prob[(speech, posSample[sampleIterator][wordIterator - 1])]
+                            # initial probability
+                            init = self.initial_prob[speech]
+                    #checking for max probability and updating the tag for the same
                     probab = emm * trans * init
                     if maxProb < probab:
                         maxProb = probab
                         maxTag = speech
+                #updating the tag  of the word in the sample
                 posSample[sampleIterator][wordIterator] = maxTag
         return posSample
 
+
     def complex_mcmc(self, sentence):
+        #dictionary to store counts of pos of different words in samples
         dictCount={}
+
+        #initializing 1000 samples
         posSample = [[]] * 1000
         posSample[0] = ["noun"] * len(sentence)
+
+        #calling the sampling function
         posSample=self.gibsSampling(posSample,sentence)
+
+        #discarding first 500 samples and storing counts of pos for every word in the sentence from the remaining samples
         for sampleIterator in range(500,1000):
                 for tagIterator in range(len(posSample[sampleIterator])):
                     if tagIterator in dictCount:
@@ -286,10 +319,14 @@ class Solver:
                             dictCount[tagIterator][posSample[sampleIterator][tagIterator]]=1
                     else:
                         dictCount[tagIterator]={}
+
+
         pos_tags=[]
+        #getting the max count of pos for each word
         for word,val in dictCount.items():
             tag=max(val.items(), key=operator.itemgetter(1))[0]
             pos_tags.append(tag)
+
         return pos_tags
 
     # This solve() method is called by label.py, so you should keep the interface the
