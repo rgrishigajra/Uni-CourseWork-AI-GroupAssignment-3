@@ -180,13 +180,13 @@ _Methods used in the program:_
 
 
 *   We need to calculate **P(S/w1,w2,w3,…..wn)/ P(S_/w1,w2,w3,…..wn)** for each test file where _P(S/w1,w2,w3,…..wn)_ is probability of an email being a spam given the words _w1,w2,w3,…wn_ and P(S_/w1,w2,w3,…..wn) is probability of an email not being a spam given the words _w1,w2,w3,…wn_.
-*   For calculating these probabilities we need **P(w1,w2,w3,…..wn/S)*P(S)/P(w1,w2,w3,…..wn)** and **P(w1,w2,w3,…..wn/S_)*P(S_)/P(w1,w2,w3,…..wn)**.
-*   But as we calculate odds ratio we only need**P(w1,w2,w3,…..wn/S), P(w1,w2,w3,…..wn/S_)**, P(S) and P(S_).
-*   Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S_), P(w2/S_)… P(wn/S_), _where P(wn/S) is probability of word w1 occurring in a spam file and _P(wn/S_)_ is probability of word wn occurring in non-spam file.
+*   For calculating these probabilities we need P(w1,w2,w3,…..wn/S)*P(S)/P(w1,w2,w3,…..wn) and P(w1,w2,w3,…..wn/S_)*P(S_)/P(w1,w2,w3,…..wn).
+*   But as we calculate odds ratio we only need **P(w1,w2,w3,…..wn/S), P(w1,w2,w3,…..wn/S_)**, P(S) and P(S_).
+*   Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S_), P(w2/S_)… P(wn/S_), _where P(wn/S) is probability of word w1 occurring in a spam file and P(wn/S_) is probability of word wn occurring in non-spam file.
 
 **Implementation:**
 
-*   _P(S)_ and _P(S_) is _assumed as 0.5 as every mail has equal possibility of being a spam or not spam.
+*   _P(S)_ and _P(S_) is assumed as 0.5 as every mail has equal possibility of being a spam or not spam.
 *   Frequency of words is calculated in **_trainSpam()_** and **_trainNotSpam()_** methods by going through every file in spam and non-spam data and breaking the file-text into token of words and saving the frequency of those words for every spam and non-spam files.
 *   P(wi/S) and P(wi/S_) is calculated in the **_likelihood()_** method during training process for every word tokenized in the training process. 
 
@@ -195,7 +195,7 @@ _Methods used in the program:_
 *   After the probabilities are calculated using training data, these probabilities are used while testing data for predicting whether a file is ‘_spam’_ or **‘_notspam’_**.
 *   Every test file is converted to bag of words, and log of ratio of **P(S/w1,w2…wn)/P(S_,w1,w2,..wn)** is calculated for every word in bag of words whose probability is calculated with training data where,
 
-    **_P(S/w1,w2…wn)/P(S_,w1,w2,..wn) = (P(w1/S)*P(w2/S)…*P(wn/S)*P(S))/ (P(w1/S_)*P(w2/S_)*P(wn/S_)*P(S_))**
+    _P(S/w1,w2…wn)/P(S_,w1,w2,..wn) = (P(w1/S)*P(w2/S)…*P(wn/S)*P(S))/ (P(w1/S_)*P(w2/S_)*P(wn/S_)*P(S_))
 
 *   If the total value is greater than 1 (meaning if the probability of that email being spam given words is greater than 0.5) than that email is labeled as **_spam_** else is labeled as **_notspam_**. The file and the resulting label are stored in a list and is written to an output file.
 
