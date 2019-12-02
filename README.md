@@ -23,8 +23,14 @@ Next up is **HMM** which is solved using viterbi algorithm. In this model the ob
 ~ Find the maximum probability in the last column and backtrack to get the most probable tags for the sentence, append them into a list and return the list. </br>
 
 **MCMC** (Monte carlo markov chains) are used for randomizing and creating a sampling space. Here, we start with the data and assume random POS tags for the sentence in the start. Then we start randomizing the POS tags, we use the disctribution and caluculate the probability of each word, given all the other words are tagged. We assign the maximum POS tag for this word using this formula : </br>
-P(W0)=P(Wi/S0)*P(S0)
-P(Wi/Si)
+For the first word of the sentence probability is calculated as: P(W0)=P(Wi/S0)*P(S0)
+For last word of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*P(Si/Si-1)*P(Si-1)*P(Si/S0)*P(S0)
+For other words of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*P(Si/Si-1)*P(Si-1)
+1000 samples are processed where the values of initial sample is consists noun for every word in a sentence.
+For each sample, every word's probability is calculated for all 12 parts of speech tags and the tag that gives highest probability is considered for that word. The tag of this word is then updated in the current sample which is used in next iteration of samples. This is done for 1000 samples and then tag count is stored for every word from the samples. While doing so, first 500 samples are ignored.
+The tag having maximum count for a word will be the final tag for that word, and thus final pos tags list will have tags with maximum probability tag value for all the words.
+
+
 
 </br>
 **Other Dicussion:** </br>
