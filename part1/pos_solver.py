@@ -86,46 +86,43 @@ class Solver:
                 self.emission_prob[word][tag] /= self.tag_count[tag]
     
     # Calculate the log of the posterior probability of a given sentence
-    #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
+    #  with a given part-of-speech labeling. Right now just returns -999 -- fix this! ---> fixed it! :)
     def posterior(self, model, sentence, label):
         if model == "Simple":
-            return 1
-        #     log_posterior = 0
-        #     for i in range(len(sentence)):
-        #         if(sentence[i] not in self.global_dic):
-        #             total_tag_count = sum(self.tag_count.values())
-        #             max_tag_count = max(self.tag_count.items(), key=operator.itemgetter(1))[1]
-        #             log_posterior += np.log10(max_tag_count/total_tag_count)
-        #         else:
-        #             if i in self.global_dic[sentence[i]]:
-        #                 log_posterior += np.log10(self.global_dic[sentence[i]][label[i]]/sum(self.global_dic[sentence[i]].values()))
-        #             else:
-        #                 self.global_dic[sentence[i]][label[i]]=0.0000001
-        #                 log_posterior += np.log10(
-        #                     self.global_dic[sentence[i]][label[i]] / sum(self.global_dic[sentence[i]].values()))
-        #     return log_posterior
-        # elif model == "Complex":
-        #     return -999
-        # elif model == "HMM":
-        #     log_posterior = 0
-        #     #calculating probability for first word
-        #     if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
-        #         log_posterior += np.log10((self.initial_prob[label[0]]) * self.emission_prob[sentence[0]][label[0]])
-        #     else:
-        #         log_posterior += np.log10(0.000001)
-        #     #calculating probability for rest of the words to calculate the final log posterior probabilities
-        #     for i in range(1, len(sentence)):
-        #         prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
-        #         if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
-        #
-        #             log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
-        #         else:
-        #             log_posterior += np.log10(0.000001)
-        #         if((sentence[i], sentence[i-1]) in self.trans_prob):
-        #             log_posterior += np.log10(self.trans_prob[(sentence[i], sentence[i-1])] * prob_tag)
-        #         else:
-        #             log_posterior += np.log10(0.000001 * prob_tag)
-        #     return log_posterior
+            log_posterior = 0
+            for i in range(len(sentence)):
+                if(sentence[i] in self.global_dic and label[i] in self.global_dic[sentence[i]]):
+                    prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
+                    log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]] * prob_tag)
+                else:
+                    #word count
+                    total_tag_count = sum(self.tag_count.values())
+                    #getting tag having maximum frequency
+                    max_tag = max(self.tag_count.items(), key=operator.itemgetter(1))[0] 
+                    val = self.tag_count[max_tag]
+                    log_posterior += np.log10(val/total_tag_count)
+            return log_posterior
+        elif model == "Complex":
+            return -999
+        elif model == "HMM":
+            log_posterior = 0
+            #calculating probability for first word
+            if(sentence[0] in self.emission_prob and label[0] in self.emission_prob[sentence[0]]):
+                log_posterior += np.log10(self.initial_prob[label[0]] * self.emission_prob[sentence[0]][label[0]])
+            else:
+                log_posterior += np.log10(0.000001)
+            #calculating probability for rest of the words to calculate the final log posterior probabilities
+            for i in range(1, len(sentence)):
+                prob_tag = self.tag_count[label[i]]/sum(self.tag_count.values())
+                if(sentence[i] in self.emission_prob and label[i] in self.emission_prob[sentence[i]]):
+                    log_posterior += np.log10(self.emission_prob[sentence[i]][label[i]])
+                else:
+                    log_posterior += np.log10(0.000001)
+                if((sentence[i], sentence[i-1]) in self.trans_prob):
+                    log_posterior += np.log10(self.trans_prob[(sentence[i], sentence[i-1])] * prob_tag)
+                else:
+                    log_posterior += np.log10(0.000001 * prob_tag)
+            return log_posterior
         else:
             return(-999)
 
@@ -135,7 +132,7 @@ class Solver:
     def train(self, data):
         self.calculate_probabilities(data)
 
-    # Functions for each algorithm. Right now this just returns nouns -- fix this!
+    # Functions for each algorithm. Right now this just returns nouns -- fix this! ---> fixed it! :)
     #
     def simplified(self, sentence):
         pos_tags = []
@@ -239,14 +236,14 @@ class Solver:
                 maxTag = ''
                 maxProb = 0
                 for speechIterator in range(len(posTags)):
-
+                    trans = 1
+                    init = 1
                     emm = 0.0000001
                     speech = posTags[speechIterator]
                     if sentence[wordIterator] in self.emission_prob:
                         if speech in self.emission_prob[sentence[wordIterator]]:
                             emm = self.emission_prob[sentence[wordIterator]][speech]
-                    trans = 1
-                    init = 1
+
                     if wordIterator != 0:
                         trans = 0.000001
                         init = 0.000001
@@ -294,11 +291,6 @@ class Solver:
             tag=max(val.items(), key=operator.itemgetter(1))[0]
             pos_tags.append(tag)
         return pos_tags
-
-
-
-
-
 
     # This solve() method is called by label.py, so you should keep the interface the
     #  same, but you can change the code itself. 

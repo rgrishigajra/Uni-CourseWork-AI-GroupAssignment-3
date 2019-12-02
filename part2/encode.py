@@ -24,14 +24,17 @@ import random
 #                   "csci is easy" -> "icsc si ysae"
 #
 def encode(str, replace_table, rearrange_table):
-    # apply replace table
+    print("# apply replace table")
+    print(str)
     str2 = str.translate({ ord(i):ord(replace_table[i]) for i in replace_table })
-
-    # pad with spaces to even multiple of rearrange table
+    print(str2)
+    print("# pad with spaces to even multiple of rearrange table")
     str2 +=  ' ' * (len(rearrange_table)-(len(str2) %  len(rearrange_table)))
-
-    # and apply rearrange table
-    return "".join(["".join([str2[rearrange_table[j] + i] for j in range(0, len(rearrange_table))]) for i in range(0, len(str), len(rearrange_table))])
+    print(str2)
+    print("# and apply rearrange table")
+    str3="".join(["".join([str2[rearrange_table[j] + i] for j in range(0, len(rearrange_table))]) for i in range(0, len(str), len(rearrange_table))])
+    print(str3)
+    return str3
 
 
 # read in encoded text, convert to lowercase, remove other characters
