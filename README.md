@@ -22,14 +22,12 @@ Next up is **HMM** which is solved using viterbi algorithm. In this model the ob
 ~ calculate probabilities for the rest of the column (or rest of the words in the sentence) using transition probabilities, emission probabilities and state probabilities.</br>
 ~ Find the maximum probability in the last column and backtrack to get the most probable tags for the sentence, append them into a list and return the list. </br>
 
-</br>
 **MCMC** (Monte carlo markov chains) are used for randomizing and creating a sampling space. Here, we start with the data and assume random POS tags for the sentence in the start. Then we start randomizing the POS tags, we use the disctribution and caluculate the probability of each word, given all the other words are tagged. We assign the maximum POS tag for this word using this formula : </br>
 P(W0)=P(Wi/S0)*P(S0)
 P(Wi/Si)
 
 </br>
-**Other Dicussion:**
-</br>
+**Other Dicussion:** </br>
 While there are no major design decision apart from the global dictionaries, there were many minor decisions or assumptions taken into consideration for different model. For example, in  the simple model we decided to assign a POS tag to a word which occurs the most no. of time in the corpus if the word is present in the test set but not in train set. Similarly for HMM, if the word and the POS tags are not in our dicitonaries (i.e. the trained data) then we assign a very small probability. The initial hurdle for us was to decide the structure of the code and how to train the data i.e., calculate the probabilities, once that was decided, the implementation was done according to the discussion done in class and ppts. To understand these models better for POS we referred to a few external sources like blogs and papers.
 
 **Results:**
