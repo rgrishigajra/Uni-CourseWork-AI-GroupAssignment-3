@@ -286,6 +286,7 @@ class Solver:
 
                 #iterate for every pos
                 for speechIterator in range(len(posTags)):
+<<<<<<< HEAD
                     #get current pos
                     speech = posTags[speechIterator]
                     
@@ -294,6 +295,17 @@ class Solver:
                     init = self.initial_prob[speech]
                     emm = 0.0000001
 
+=======
+                    # get current pos
+                    speech = posTags[speechIterator]
+                    #initial declarations
+                    trans = 1
+                    init =  self.initial_prob[speech]
+                    emm = 0.0000001
+
+
+
+>>>>>>> 128e4b38f8b386406ba87e74be6310d4eb73767a
                     #calculate emmision probability
                     if sentence[wordIterator] in self.emission_prob:
                         if speech in self.emission_prob[sentence[wordIterator]]:

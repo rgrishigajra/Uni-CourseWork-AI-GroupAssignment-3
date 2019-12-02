@@ -22,12 +22,18 @@ Next up is **HMM** which is solved using viterbi algorithm. In this model the ob
 ~ calculate probabilities for the rest of the column (or rest of the words in the sentence) using transition probabilities, emission probabilities and state probabilities.</br>
 ~ Find the maximum probability in the last column and backtrack to get the most probable tags for the sentence, append them into a list and return the list. </br>
 
-</br>
-For **MCMC**
+**MCMC** (Monte carlo markov chains) are used for randomizing and creating a sampling space. Here, we start with the data and assume random POS tags for the sentence in the start. Then we start randomizing the POS tags, we use the disctribution and caluculate the probability of each word, given all the other words are tagged. We assign the maximum POS tag for this word using this formula : </br>
+For the first word of the sentence probability is calculated as: P(W0)=P(Wi/S0)*P(S0)
+For last word of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*P(Si/Si-1)*P(Si-1)*P(Si/S0)*P(S0)
+For other words of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*P(Si/Si-1)*P(Si-1)
+1000 samples are processed where the values of initial sample is consists noun for every word in a sentence.
+For each sample, every word's probability is calculated for all 12 parts of speech tags and the tag that gives highest probability is considered for that word. The tag of this word is then updated in the current sample which is used in next iteration of samples. This is done for 1000 samples and then tag count is stored for every word from the samples. While doing so, first 500 samples are ignored.
+The tag having maximum count for a word will be the final tag for that word, and thus final pos tags list will have tags with maximum probability tag value for all the words.
+
+
 
 </br>
-**Other Dicussion:**
-</br>
+**Other Dicussion:** </br>
 While there are no major design decision apart from the global dictionaries, there were many minor decisions or assumptions taken into consideration for different model. For example, in  the simple model we decided to assign a POS tag to a word which occurs the most no. of time in the corpus if the word is present in the test set but not in train set. Similarly for HMM, if the word and the POS tags are not in our dicitonaries (i.e. the trained data) then we assign a very small probability. The initial hurdle for us was to decide the structure of the code and how to train the data i.e., calculate the probabilities, once that was decided, the implementation was done according to the discussion done in class and ppts. To understand these models better for POS we referred to a few external sources like blogs and papers.
 
 **Results:**
@@ -39,7 +45,7 @@ While there are no major design decision apart from the global dictionaries, the
 | 0. Ground Truth  | 100.00%  | 100.00%  | 
 | 1. Simple  | 93.92%  | 47.45%  | 
 | 2. HMM  | 95.06%  | 54.25%  | 
-| 3. Complex  | 18.60%  | 0.00%  |
+| 3. Complex  | 92.07%  | 40.52%  |
 
 
 **
@@ -127,3 +133,93 @@ Output :
 	*o  union is more profound than marriage for it embodies the highest ideals of love fidelitw devotion sacrifice and familw n forming a marital union tyo people become something greater than once thew yere s some of the petitioners in these cases demonstrate marriage embodies a love that maw endure even past death t yould misunderstand these men and yomen to saw thew disrespect the idea of marriage heir plea is that thew do respect it respect it so deeplw that thew seex to find its fulfillment for themselves heir hope is not to be condemned to live in loneliness ekcluded from one of civilizations oldest institutions hew asx for equal dignitw in the ewes of the lay he onstitution grants them that right he judgment of the ourt of ppeals for the ikth ircuit is reversed t is so ordered*      
 
 The above output was generated in ten minutes during our testing, which was pretty close to the answer, thus we didnt find a need to perform beam search or optimizing the algorithm.
+
+<!----- Conversion time: 0.706 seconds.
+
+
+Using this Markdown file:
+
+1. Cut and paste this output into your source file.
+2. See the notes and action items below regarding this conversion run.
+3. Check the rendered output (headings, lists, code blocks, tables) for proper
+   formatting and use a linkchecker before you publish this page.
+
+Conversion notes:
+
+* Docs to Markdown version 1.0β17
+* Sun Dec 01 2019 18:25:31 GMT-0800 (PST)
+* Source doc: https://docs.google.com/open?id=1VHThxp5QV7QiQXRFk3R5FOS0OWA5_-2donuziINBFeg
+----->
+
+
+# Part 3: Spam Classification
+
+**Naive Bayes classifier** is used to implement the spam classifier.
+
+This program involves a **training part** where the likelihood probabilities are calculated based on the provided training data and a **testing part** where the program predicts where the file is spam or not.
+
+_Methods used in the program:_
+
+**Test() **- To test the data and predict whether the file is spam or not
+
+**Train() **- To train on provided spam and non-spam file
+
+**likelihood()** - To calculate likelihood probabilities using spam and non-spam files.
+
+**trainSpam()** - To train on spam files.
+
+**trainNotSpam()** -To train on non-spam files.
+
+**Approach:**
+
+
+
+*   We need to calculate **P(S/w1,w2,w3,…..wn)/ P(S_/w1,w2,w3,…..wn)** for each test file where _P(S/w1,w2,w3,…..wn)_ is probability of an email being a spam given the words _w1,w2,w3,…wn_ and _P(S_/w1,w2,w3,…..wn)_ is probability of an email not being a spam given the words _w1,w2,w3,…wn_.
+*   For calculating these probabilities we need **P(w1,w2,w3,…..wn/S)*P(S)/P(w1,w2,w3,…..wn)** and **P(w1,w2,w3,…..wn/S_)*P(S_)/P(w1,w2,w3,…..wn)**.
+*   But as we calculate odds ratio we only need**_ P(w1,w2,w3,…..wn/S), P(w1,w2,w3,…..wn/S_),_** _P(S)_ and _P(S_)._
+*   Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S_), P(w2/S_)… P(wn/S_), _where P(wn/S) is probability of word w1 occurring in a spam file and _P(wn/S_)_ is probability of word _wn _occurring in non-spam file.
+
+**Implementation:**
+
+
+
+*   _P(S)_ and _P(S_) is _assumed as 0.5 as every mail has equal possibility of being a spam or not spam.
+*   Frequency of words is calculated in **_trainSpam()_** and **_trainNotSpam()_** methods by going through every file in spam and non-spam data and breaking the file-text into token of words and saving the frequency of those words for every spam and non-spam files.
+*   _P(wi/S) and P(wi/S_)_ is calculated in the **_likelihood()_** method during training process for every word tokenized in the training process. 
+
+    **_P(wi/S) = frequency of the word in spam files/total number of words in spam files P(wi/S_)=  frequency of the word in non-spam files/total number of words in non-spam files_**
+
+*   After the probabilities are calculated using training data, these probabilities are used while testing data for predicting whether a file is ‘_spam’_ or **‘_notspam’_**.
+*   Every test file is converted to bag of words, and log of ratio of **_P(S/w1,w2…wn)/P(S_,w1,w2,..wn)_** is calculated for every word in bag of words whose probability is calculated with training data where,
+
+    **_P(S/w1,w2…wn)/P(S_,w1,w2,..wn)= (P(w1/S)*P(w2/S)…*P(wn/S)*P(S))/ (P(w1/S_)*P(w2/S_)…*P(wn/S_)*P(S_))_**
+
+*   If the total value is greater than 1 (meaning if the probability of that email being spam given words is greater than 0.5) than that email is labeled as **_spam_** else is labeled as **_notspam_**. The file and the resulting label are stored in a list and is written to an output file.
+
+**Difficulties faced:**
+
+
+
+*   Difficulty was faced while opening some of the files, due to **UniCodeError**.
+*   Thus, the file is opened using **utf8** encoding and has attribute **errors=’ignore’**.
+*   The **comma**, **semi-colon** and **equal to** is replaced from file text with **whitespace** to **tokenize** the words properly.
+*   The word is converted to **lower case** before storing to avoid multiple copies of the same word in different cases.
+*   A dictionary **‘vocab’** is maintained such that it contains all the unique words from training data and its frequency is maintained for spam and non-spam files.
+*   The probabilities of test data are calculated using **log **to avoid working with extremely small values.
+
+**Approaches tried:**
+
+
+
+*   The likelihood probabilities are calculated as ->
+
+    **frequency of the word in spam or non-spam files/total number of words in spam or non-spam files**
+
+*   A different approach was tried originally where the likelihood probabilities were calculated as->
+
+**Word appearances in spam or non-spam files/total number of that spam or non-spam**
+
+**_Currently, the program predicts the spam file correctly 95% of the time._**
+
+
+<!-- Docs to Markdown version 1.0β17 -->

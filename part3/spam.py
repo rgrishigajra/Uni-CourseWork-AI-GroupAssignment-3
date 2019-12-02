@@ -53,7 +53,7 @@ def trainNotSpam(vocab,pathNotSpam):
 
 
 #calculating priors with the trained data
-def priors(vocab,wordCountSpam,wordCountNotSpam):
+def likelihood(vocab,wordCountSpam,wordCountNotSpam):
     pSpam={}
     pNotSpam={}
     for word in vocab:
@@ -78,7 +78,7 @@ def train(train_directory):
     vocab,wordCountNotSpam,fileCountNotSpam = trainNotSpam(vocab,pathNotSpam)
 
     #calling method to calculate priors
-    pSpam, pNotSpam = priors(vocab,wordCountSpam,wordCountNotSpam)
+    pSpam, pNotSpam = likelihood(vocab,wordCountSpam,wordCountNotSpam)
 
     return pSpam,pNotSpam
 
