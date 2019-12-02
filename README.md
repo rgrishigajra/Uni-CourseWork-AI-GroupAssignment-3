@@ -41,6 +41,8 @@ For HMM model we have maintained a list called viterbi which works similar to a 
 
 For MCMC we have two assumptions: first is the same as previous one that if a word or a tag is not present in the train set, emission probability is assign a very low probability. Second, is that for every word we are getting the tag having maximum probability. However, we are working with occurrences and ignoring the division by the total occurrences of the tag for that word as it wont have any effect. </br>
 
+**Reference: ** https://web.stanford.edu/~jurafsky/slp3/8.pdf
+
 **Results:**
 </br>
 ==> So far scored 2000 sentences with 29442 words.
@@ -50,7 +52,7 @@ For MCMC we have two assumptions: first is the same as previous one that if a wo
 | 0. Ground Truth  | 100.00%  | 100.00%  | 
 | 1. Simple  | 93.92%  | 47.45%  | 
 | 2. HMM  | 95.06%  | 54.25%  | 
-| 3. Complex  | 92.07%  | 40.52%  |
+| 3. Complex  | 92.12%  | 40.80%  |
 
 
 **
@@ -182,7 +184,7 @@ _Methods used in the program:_
 *   We need to calculate **P(S/w1,w2,w3,…..wn)/ P(S_/w1,w2,w3,…..wn)** for each test file where _P(S/w1,w2,w3,…..wn)_ is probability of an email being a spam given the words _w1,w2,w3,…wn_ and P(S_/w1,w2,w3,…..wn) is probability of an email not being a spam given the words _w1,w2,w3,…wn_.
 *   For calculating these probabilities we need P(w1,w2,w3,…..wn/S)*P(S)/P(w1,w2,w3,…..wn) and P(w1,w2,w3,…..wn/S_)*P(S_)/P(w1,w2,w3,…..wn).
 *   But as we calculate odds ratio we only need **P(w1,w2,w3,…..wn/S), P(w1,w2,w3,…..wn/S_)**, P(S) and P(S_).
-*   Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S_), P(w2/S_)… P(wn/S_), _where P(wn/S) is probability of word w1 occurring in a spam file and P(wn/S_) is probability of word wn occurring in non-spam file.
+*   Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S_), P(w2/S_)… P(wn/S_), where P(wn/S) is probability of word w1 occurring in a spam file and P(wn/S_) is probability of word wn occurring in non-spam file.
 
 **Implementation:**
 
