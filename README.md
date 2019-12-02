@@ -28,9 +28,8 @@ For last word of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*P(
 For other words of the sentence probability is calculated as: P(Wi/Si)=P(Wi/Si)*P(Si/Si-1)*P(Si-1)
 1000 samples are processed where the values of initial sample is consists noun for every word in a sentence.
 For each sample, every word's probability is calculated for all 12 parts of speech tags and the tag that gives highest probability is considered for that word. The tag of this word is then updated in the current sample which is used in next iteration of samples. This is done for 1000 samples and then tag count is stored for every word from the samples. While doing so, first 500 samples are ignored.
-The tag having maximum count for a word will be the final tag for that word, and thus final pos tags list will have tags with maximum probability tag value for all the words.
+The tag having maximum count for a word will be the final tag for that word, and thus final pos tags list will have tags with maximum probability tag value for all the words. </br>
 
-</br>
 **Other Dicussion:** </br>
 There were many design decision that had to be made initailly like: How to train the data, which type of data structure to be used, What should be the flow of the code. One of the major design decision made was to make global dictionaries for probability so that the whole code can access it. Once the above questions were answered we went onto working on the code. For simple model, the implementation was straight forward. One assumption considered for this model was that if a word or tag is present in the test file but not in the train file we assign the word the most occurring tag in the corpus. </br>
 
@@ -162,9 +161,9 @@ This program involves a **training part** where the likelihood probabilities are
 
 _Methods used in the program:_
 
-**Test() **- To test the data and predict whether the file is spam or not
+**Test()** - To test the data and predict whether the file is spam or not
 
-**Train() **- To train on provided spam and non-spam file
+**Train()** - To train on provided spam and non-spam file
 
 **likelihood()** - To calculate likelihood probabilities using spam and non-spam files.
 
@@ -182,8 +181,6 @@ _Methods used in the program:_
 *   Now, assumption is made that no word is dependent on other word thus we need _P(w1/S), P(w2/S)… P(wn/S)_ and _P(w1/S_), P(w2/S_)… P(wn/S_), _where P(wn/S) is probability of word w1 occurring in a spam file and _P(wn/S_)_ is probability of word _wn _occurring in non-spam file.
 
 **Implementation:**
-
-
 
 *   _P(S)_ and _P(S_) is _assumed as 0.5 as every mail has equal possibility of being a spam or not spam.
 *   Frequency of words is calculated in **_trainSpam()_** and **_trainNotSpam()_** methods by going through every file in spam and non-spam data and breaking the file-text into token of words and saving the frequency of those words for every spam and non-spam files.
