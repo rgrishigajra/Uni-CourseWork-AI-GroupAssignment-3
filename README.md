@@ -21,6 +21,7 @@ Next up is **HMM** which is solved using viterbi algorithm. In this model the ob
 ~ calculate probabilities for the first  column (or first word of the sentence) using initial probabilities and the emission probabilities.</br>
 ~ calculate probabilities for the rest of the column (or rest of the words in the sentence) using transition probabilities, emission probabilities and state probabilities.</br>
 ~ Find the maximum probability in the last column and backtrack to get the most probable tags for the sentence, append them into a list and return the list. </br>
+**Reference:** https://web.stanford.edu/~jurafsky/slp3/8.pdf
 
 **MCMC** (Monte carlo markov chains) are used for randomizing and creating a sampling space. Here, we start with the data and assume random POS tags for the sentence in the start. Then we start randomizing the POS tags, we use the disctribution and caluculate the probability of each word, given all the other words are tagged. We assign the maximum POS tag for this word using this formula : </br>
 For the first word of the sentence probability is calculated as: P(W0)=P(Wi/S0)*P(S0) </br>
@@ -41,7 +42,6 @@ For HMM model we have maintained a list called viterbi which works similar to a 
 
 For MCMC we have two assumptions: first is the same as previous one that if a word or a tag is not present in the train set, emission probability is assign a very low probability. Second, is that for every word we are getting the tag having maximum probability. However, we are working with occurrences and ignoring the division by the total occurrences of the tag for that word as it wont have any effect. </br>
 
-**Reference:** https://web.stanford.edu/~jurafsky/slp3/8.pdf
 
 **Results:**
 </br>
